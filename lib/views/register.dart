@@ -1,11 +1,13 @@
 import 'package:balancio_pro/constants/colors.dart';
 import 'package:balancio_pro/constants/fonts.dart';
+import 'package:balancio_pro/controllers/auth_controller.dart';
 import 'package:balancio_pro/custom%20widgets/button.dart';
-import 'package:balancio_pro/custom%20widgets/social_buttons.dart';
+import 'package:balancio_pro/custom%20widgets/snackbar.dart';
 import 'package:balancio_pro/custom%20widgets/textfield.dart';
 import 'package:balancio_pro/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
 class Register extends StatefulWidget {
@@ -31,6 +33,8 @@ class _RegisterState extends State<Register>
         CurvedAnimation(parent: _animationController, curve: Curves.easeIn));
     _animationController.forward();
   }
+
+  final _authController = Get.put(AuthController());
 
   @override
   void dispose() {
@@ -100,77 +104,59 @@ class _RegisterState extends State<Register>
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       CustomField(
+                        controller: _authController.emailController,
                         labelText: 'Enter your email',
                         prefix: Icons.email_rounded,
                       ),
                       SizedBox(
                         height: 40.h,
                       ),
-                      CustomField(
-                        labelText: 'Enter your password',
-                        prefix: Icons.password_rounded,
-                        suffix: Icons.visibility,
+                      Obx(
+                        () => CustomField(
+                          isPass: _authController.isPass.value,
+                          controller: _authController.passwordController,
+                          labelText: 'Enter your password',
+                          suffix: _authController.isPass.value
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          onTapSuffix: () {
+                            _authController.showPass();
+                          },
+                        ),
                       ),
                       SizedBox(
                         height: 40.h,
                       ),
-                      CustomField(
-                        labelText: 'Confirm your password',
-                        prefix: Icons.password_rounded,
-                        suffix: Icons.visibility,
+                      Obx(
+                        () => CustomField(
+                          isPass: _authController.isConfirmPass.value,
+                          controller: _authController.confirmPassController,
+                          labelText: 'Confirm your password',
+                          suffix: _authController.isConfirmPass.value
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          onTapSuffix: () {
+                            _authController.showConfirmPass();
+                          },
+                        ),
                       ),
                       SizedBox(
                         height: 40.h,
                       ),
                     ],
                   ),
-                  CustomButton(
-                    buttonText: 'Sign Up',
-                    padding: EdgeInsets.symmetric(vertical: 40.h),
-                    bgColor: primaryColor,
-                    borderRadius: 12,
-                    onPressed: () {},
-                  ),
-                  SizedBox(height: 5.h),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Row(
-                      children: [
-                        Expanded(
-                            child: Divider(
-                                color:
-                                    const Color.fromARGB(90, 234, 234, 234))),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 50.w),
-                          child: Text(
-                            "OR",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 45.sp,
-                            ),
+                  Obx(
+                    () => _authController.isLoading.value
+                        ? SpinKitDoubleBounce(color: Colors.white, size: 50)
+                        : CustomButton(
+                            buttonText: 'Sign Up',
+                            padding: EdgeInsets.symmetric(vertical: 40.h),
+                            bgColor: primaryColor,
+                            borderRadius: 12,
+                            onPressed: () {
+                              _authController.registerUser();
+                            },
                           ),
-                        ),
-                        Expanded(
-                            child: Divider(
-                                color:
-                                    const Color.fromARGB(90, 234, 234, 234))),
-                      ],
-                    ),
-                  ),
-                  SocialButtons(
-                    btnText: 'Continue with Google',
-                    logo: 'assets/images/google_logo.png',
-                    bgColor: Colors.white,
-                    textColor: Colors.black,
-                    onPressed: () {},
-                  ),
-                  SizedBox(height: 5),
-                  SocialButtons(
-                    btnText: 'Continue with Apple',
-                    logo: 'assets/images/apple_logo.png',
-                    bgColor: Colors.black,
-                    textColor: Colors.white,
-                    onPressed: () {},
                   ),
                   SizedBox(height: 50.h),
                   Row(

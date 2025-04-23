@@ -7,13 +7,18 @@ class CustomField extends StatefulWidget {
   final IconData? prefix;
   final IconData? suffix;
   final bool isPass;
+  final TextEditingController controller;
+  final VoidCallback? onTapSuffix;
 
-  const CustomField(
-      {required this.labelText,
-      this.prefix,
-      this.suffix,
-      this.isPass = false,
-      super.key});
+  const CustomField({
+    required this.labelText,
+    this.prefix,
+    this.suffix,
+    this.isPass = false,
+    required this.controller,
+    this.onTapSuffix,
+    super.key,
+  });
 
   @override
   State<CustomField> createState() => _CustomFieldState();
@@ -23,23 +28,29 @@ class _CustomFieldState extends State<CustomField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      obscureText: widget.isPass,
+      controller: widget.controller,
       style: TextStyle(
         color: accentColor,
       ),
       decoration: InputDecoration(
         fillColor: primaryColor,
         filled: true,
-        prefixIcon: Padding(
-          padding: EdgeInsets.only(left: 24, right: 8),
-          child: Icon(widget.prefix),
-        ),
-        suffixIcon: Padding(
-          padding: EdgeInsets.only(left: 8, right: 14),
-          child: IconButton(
-            onPressed: () {},
-            icon: Icon(widget.suffix),
-          ),
-        ),
+        prefixIcon: widget.prefix != null
+            ? Padding(
+                padding: EdgeInsets.only(left: 24, right: 8),
+                child: Icon(widget.prefix),
+              )
+            : null,
+        suffixIcon: widget.suffix != null
+            ? Padding(
+                padding: EdgeInsets.only(left: 8, right: 14),
+                child: IconButton(
+                  onPressed: widget.onTapSuffix,
+                  icon: Icon(widget.suffix),
+                ),
+              )
+            : null,
         prefixIconColor: accentColor,
         suffixIconColor: accentColor,
         labelText: widget.labelText,

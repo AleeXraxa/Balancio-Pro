@@ -1,5 +1,6 @@
 import 'package:balancio_pro/constants/colors.dart';
 import 'package:balancio_pro/constants/fonts.dart';
+import 'package:balancio_pro/controllers/auth_controller.dart';
 import 'package:balancio_pro/custom%20widgets/button.dart';
 import 'package:balancio_pro/custom%20widgets/snackbar.dart';
 import 'package:balancio_pro/custom%20widgets/social_buttons.dart';
@@ -32,6 +33,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         CurvedAnimation(parent: _animationController, curve: Curves.easeIn));
     _animationController.forward();
   }
+
+  final _authController = Get.put(AuthController());
 
   @override
   void dispose() {
@@ -101,16 +104,25 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       CustomField(
+                        controller: _authController.emailController,
                         labelText: 'Enter your email',
                         prefix: Icons.email_rounded,
                       ),
                       SizedBox(
                         height: 40.h,
                       ),
-                      CustomField(
-                        labelText: 'Enter your password',
-                        prefix: Icons.password_rounded,
-                        suffix: Icons.visibility,
+                      Obx(
+                        () => CustomField(
+                          isPass: _authController.isPass.value,
+                          controller: _authController.passwordController,
+                          labelText: 'Enter your password',
+                          suffix: _authController.isPass.value
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          onTapSuffix: () {
+                            _authController.showPass();
+                          },
+                        ),
                       ),
                       TextButton(
                         onPressed: () {

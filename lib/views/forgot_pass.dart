@@ -1,5 +1,6 @@
 import 'package:balancio_pro/constants/colors.dart';
 import 'package:balancio_pro/constants/fonts.dart';
+import 'package:balancio_pro/controllers/auth_controller.dart';
 import 'package:balancio_pro/custom%20widgets/button.dart';
 import 'package:balancio_pro/custom%20widgets/textfield.dart';
 import 'package:balancio_pro/views/login.dart';
@@ -30,6 +31,8 @@ class _ForgotPassState extends State<ForgotPass>
         CurvedAnimation(parent: _animationController, curve: Curves.easeIn));
     _animationController.forward();
   }
+
+  final _authController = Get.put(AuthController());
 
   @override
   void dispose() {
@@ -99,6 +102,7 @@ class _ForgotPassState extends State<ForgotPass>
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       CustomField(
+                        controller: _authController.emailController,
                         labelText: 'Enter your email',
                         prefix: Icons.email_rounded,
                       ),
