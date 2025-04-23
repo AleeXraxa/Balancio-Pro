@@ -1,4 +1,5 @@
 import 'package:balancio_pro/constants/colors.dart';
+import 'package:balancio_pro/services/onboarding.dart';
 import 'package:balancio_pro/views/login.dart';
 import 'package:balancio_pro/views/onboarding_screens.dart';
 import 'package:flutter/material.dart';
@@ -123,11 +124,12 @@ class _OnboardingState extends State<Onboarding>
                       padding: EdgeInsets.symmetric(vertical: 15),
                       elevation: 5,
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (lastpage) {
                         Get.offAll(Login(),
                             duration: Duration(milliseconds: 800),
                             transition: Transition.leftToRight);
+                        await OnboardingCheck.isCompleted();
                       } else {
                         _controller.nextPage(
                             duration: Duration(milliseconds: 500),

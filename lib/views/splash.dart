@@ -1,5 +1,7 @@
 import 'package:balancio_pro/constants/colors.dart';
 import 'package:balancio_pro/constants/fonts.dart';
+import 'package:balancio_pro/services/onboarding.dart';
+import 'package:balancio_pro/views/login.dart';
 import 'package:balancio_pro/views/onboarding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -58,9 +60,16 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     await Future.delayed(_logoController.duration! +
         _textController.duration! +
         Duration(seconds: 2));
-    Get.offAll(Onboarding(),
-        duration: Duration(milliseconds: 800),
-        transition: Transition.leftToRight);
+    final isFirst = await OnboardingCheck.isFirstTime();
+    if (isFirst) {
+      Get.offAll(Onboarding(),
+          duration: Duration(milliseconds: 800),
+          transition: Transition.leftToRight);
+    } else {
+      Get.offAll(Login(),
+          duration: Duration(milliseconds: 800),
+          transition: Transition.leftToRight);
+    }
   }
 
   @override
