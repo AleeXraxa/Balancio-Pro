@@ -113,6 +113,105 @@ class AuthController extends GetxController {
     }
   }
 
+  Future<void> loginUser() async {
+    try {
+      final email = emailController.text.trim();
+      final pass = passwordController.text.trim();
+
+      if (email.isEmpty && pass.isEmpty) {
+        Custombar.showBar(
+          'Login Failed',
+          'Please fill all the fields',
+          [Colors.purple, Colors.blueAccent],
+          Colors.white,
+        );
+        return;
+      }
+      if (email.isEmpty) {
+        Custombar.showBar(
+          'Login Failed',
+          'Please enter your email',
+          [Colors.purple, Colors.blueAccent],
+          Colors.white,
+        );
+        return;
+      }
+      if (pass.isEmpty) {
+        Custombar.showBar(
+          'Login Failed',
+          'Please enter your password',
+          [Colors.purple, Colors.blueAccent],
+          Colors.white,
+        );
+        return;
+      }
+      isLoading.value = true;
+      UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(email: email, password: pass);
+
+      if (userCredential.user != null && !userCredential.user!.emailVerified) {
+        userCredential.user!.sendEmailVerification();
+        Get.offAll(
+            EmailVerification(
+              email: userCredential.user!.email!,
+            ),
+            duration: Duration(milliseconds: 800),
+            transition: Transition.leftToRight);
+      } else {
+        Custombar.showBar(
+          'Login Successfully',
+          'Welcome Dear User.',
+          [Colors.purple, Colors.blueAccent],
+          Colors.white,
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      handleFirebaseAuthError(e);
+    } catch (e) {
+      Custombar.showBar(
+        'Login Failed',
+        'Please try again later.',
+        [Colors.purple, Colors.blueAccent],
+        Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void emailVerificationCheck() async {
+    var user = _auth.currentUser;
+
+    if (user != null && user.emailVerified) {
+      Custombar.showBar(
+        'Email Verified',
+        'Email successfully verified. now you can login',
+        [Colors.blueAccent, Colors.purpleAccent],
+        Colors.white,
+      );
+      Get.offAll(Login(),
+          duration: Duration(milliseconds: 800),
+          transition: Transition.leftToRight);
+    } else {
+      await Future.delayed(Duration(seconds: 3));
+      await _auth.currentUser?.reload();
+      var currentUser = _auth.currentUser;
+      if (currentUser != null && currentUser.emailVerified) {
+        Get.offAll(Login(),
+            duration: Duration(milliseconds: 800),
+            transition: Transition.leftToRight);
+        Custombar.showBar(
+          'Email Verified',
+          'Email successfully verified. now you can login',
+          [Colors.blueAccent, Colors.purpleAccent],
+          Colors.white,
+        );
+      } else {
+        emailVerificationCheck();
+      }
+    }
+  }
+
   void handleFirebaseAuthError(FirebaseAuthException e) {
     switch (e.code) {
       case 'email-already-in-use':
@@ -187,7 +286,7 @@ class AuthController extends GetxController {
         startResendCoolDown();
         Custombar.showBar(
           'Email Sent',
-          'Please check your email & rification Emaiverify your account',
+          'Please check your email & verify your account',
           [Colors.red, Colors.deepOrange],
           Colors.white,
         );

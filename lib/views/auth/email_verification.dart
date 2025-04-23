@@ -33,6 +33,7 @@ class _EmailVerificationState extends State<EmailVerification>
     _animation = Tween<double>(begin: 0.0, end: 1).animate(
         CurvedAnimation(parent: _animationController, curve: Curves.easeIn));
     _animationController.forward();
+    _authController.emailVerificationCheck();
   }
 
   final _authController = Get.put(AuthController());
@@ -107,18 +108,20 @@ class _EmailVerificationState extends State<EmailVerification>
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [],
                   ),
-                  CustomButton(
-                    buttonText: _authController.resendCoolDown.value == 0
-                        ? 'Resend'
-                        : 'Resend in ${_authController.resendCoolDown.value}',
-                    padding: EdgeInsets.symmetric(vertical: 40.h),
-                    bgColor: primaryColor,
-                    borderRadius: 12,
-                    onPressed: () {
-                      _authController.resendCoolDown.value == 0
-                          ? _authController.resendEmail()
-                          : null;
-                    },
+                  Obx(
+                    () => CustomButton(
+                      buttonText: _authController.resendCoolDown.value == 0
+                          ? 'Resend'
+                          : 'Resend in ${_authController.resendCoolDown.value}',
+                      padding: EdgeInsets.symmetric(vertical: 40.h),
+                      bgColor: primaryColor,
+                      borderRadius: 12,
+                      onPressed: () {
+                        _authController.resendCoolDown.value == 0
+                            ? _authController.resendEmail()
+                            : null;
+                      },
+                    ),
                   ),
                 ],
               ),

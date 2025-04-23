@@ -2,13 +2,13 @@ import 'package:balancio_pro/constants/colors.dart';
 import 'package:balancio_pro/constants/fonts.dart';
 import 'package:balancio_pro/controllers/auth_controller.dart';
 import 'package:balancio_pro/custom%20widgets/button.dart';
-import 'package:balancio_pro/custom%20widgets/snackbar.dart';
 import 'package:balancio_pro/custom%20widgets/social_buttons.dart';
 import 'package:balancio_pro/custom%20widgets/textfield.dart';
 import 'package:balancio_pro/views/auth/forgot_pass.dart';
 import 'package:balancio_pro/views/auth/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
 class Login extends StatefulWidget {
@@ -141,19 +141,18 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                       ),
                     ],
                   ),
-                  CustomButton(
-                    buttonText: 'Login',
-                    padding: EdgeInsets.symmetric(vertical: 40.h),
-                    bgColor: primaryColor,
-                    borderRadius: 12,
-                    onPressed: () {
-                      Custombar.showBar(
-                        'Working',
-                        'bar is working',
-                        [Colors.purple, Colors.blueAccent],
-                        Colors.white,
-                      );
-                    },
+                  Obx(
+                    () => _authController.isLoading.value
+                        ? SpinKitDoubleBounce(color: Colors.white, size: 50)
+                        : CustomButton(
+                            buttonText: 'Login',
+                            padding: EdgeInsets.symmetric(vertical: 40.h),
+                            bgColor: primaryColor,
+                            borderRadius: 12,
+                            onPressed: () {
+                              _authController.loginUser();
+                            },
+                          ),
                   ),
                   SizedBox(height: 5.h),
                   Padding(
