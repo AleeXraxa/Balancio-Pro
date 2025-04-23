@@ -1,6 +1,7 @@
 import 'package:balancio_pro/constants/colors.dart';
 import 'package:balancio_pro/constants/fonts.dart';
 import 'package:balancio_pro/custom%20widgets/button.dart';
+import 'package:balancio_pro/custom%20widgets/snackbar.dart';
 import 'package:balancio_pro/custom%20widgets/social_buttons.dart';
 import 'package:balancio_pro/custom%20widgets/textfield.dart';
 import 'package:balancio_pro/views/forgot_pass.dart';
@@ -133,7 +134,14 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                     padding: EdgeInsets.symmetric(vertical: 40.h),
                     bgColor: primaryColor,
                     borderRadius: 12,
-                    onPressed: () {},
+                    onPressed: () {
+                      Custombar.showBar(
+                        'Working',
+                        'bar is working',
+                        [Colors.purple, Colors.blueAccent],
+                        Colors.white,
+                      );
+                    },
                   ),
                   SizedBox(height: 5.h),
                   Padding(
@@ -166,14 +174,6 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                     logo: 'assets/images/google_logo.png',
                     bgColor: Colors.white,
                     textColor: Colors.black,
-                    onPressed: () {},
-                  ),
-                  SizedBox(height: 5),
-                  SocialButtons(
-                    btnText: 'Continue with Apple',
-                    logo: 'assets/images/apple_logo.png',
-                    bgColor: Colors.black,
-                    textColor: Colors.white,
                     onPressed: () {},
                   ),
                   SizedBox(height: 50.h),

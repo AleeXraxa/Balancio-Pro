@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "553450963720",
+    "project_id": "balancio-pro-a6035",
+    "storage_bucket": "balancio-pro-a6035.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:553450963720:android:809ea9991b0ce137b062bd",
+        "android_client_info": {
+          "package_name": "com.example.balancio_pro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "553450963720-ho31pjbjf47hncmnl4s0lo88aotjrkas.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7ugiY1hEVTXq7fWTcXlG5nI4rR2TF8K8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "553450963720-ho31pjbjf47hncmnl4s0lo88aotjrkas.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
