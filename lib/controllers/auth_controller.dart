@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:balancio_pro/custom%20widgets/snackbar.dart';
-import 'package:balancio_pro/views/login.dart';
+import 'package:balancio_pro/views/auth/email_verification.dart';
+import 'package:balancio_pro/views/auth/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -90,9 +93,19 @@ class AuthController extends GetxController {
         [Colors.purple, Colors.blueAccent],
         Colors.white,
       );
-      Get.offAll(Login(),
-          duration: Duration(milliseconds: 800),
-          transition: Transition.leftToRight);
+      if (!userCredential.user!.emailVerified) {
+        userCredential.user!.sendEmailVerification();
+        Get.offAll(
+            EmailVerification(
+              email: userCredential.user!.email!,
+            ),
+            duration: Duration(milliseconds: 800),
+            transition: Transition.leftToRight);
+      } else {
+        Get.offAll(Login(),
+            duration: Duration(milliseconds: 800),
+            transition: Transition.leftToRight);
+      }
     } on FirebaseAuthException catch (e) {
       handleFirebaseAuthError(e);
     } finally {
@@ -164,5 +177,57 @@ class AuthController extends GetxController {
           Colors.white,
         );
     }
+  }
+
+  void resendEmail() async {
+    try {
+      var user = _auth.currentUser;
+      if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+        startResendCoolDown();
+        Custombar.showBar(
+          'Email Sent',
+          'Please check your email & rification Emaiverify your account',
+          [Colors.red, Colors.deepOrange],
+          Colors.white,
+        );
+      } else if (user == null) {
+        Custombar.showBar(
+          'Login First',
+          'No user is currently logged in.',
+          [Colors.red, Colors.deepOrange],
+          Colors.white,
+        );
+      } else {
+        Custombar.showBar(
+          'Already Verified',
+          'Your email is already verified. Please login.',
+          [Colors.red, Colors.deepOrange],
+          Colors.white,
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      handleFirebaseAuthError(e);
+    } catch (e) {
+      Custombar.showBar(
+        'Failed',
+        'Something went wrong. Please try again later',
+        [Colors.red, Colors.deepOrange],
+        Colors.white,
+      );
+    }
+  }
+
+  RxInt resendCoolDown = 0.obs;
+
+  void startResendCoolDown() {
+    resendCoolDown.value = 30;
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      if (resendCoolDown.value == 0) {
+        timer.cancel();
+      } else {
+        resendCoolDown.value--;
+      }
+    });
   }
 }

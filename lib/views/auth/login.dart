@@ -3,22 +3,22 @@ import 'package:balancio_pro/constants/fonts.dart';
 import 'package:balancio_pro/controllers/auth_controller.dart';
 import 'package:balancio_pro/custom%20widgets/button.dart';
 import 'package:balancio_pro/custom%20widgets/snackbar.dart';
+import 'package:balancio_pro/custom%20widgets/social_buttons.dart';
 import 'package:balancio_pro/custom%20widgets/textfield.dart';
-import 'package:balancio_pro/views/login.dart';
+import 'package:balancio_pro/views/auth/forgot_pass.dart';
+import 'package:balancio_pro/views/auth/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
-class Register extends StatefulWidget {
-  const Register({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  State<Register> createState() => _RegisterState();
+  State<Login> createState() => _LoginState();
 }
 
-class _RegisterState extends State<Register>
-    with SingleTickerProviderStateMixin {
+class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
 
@@ -84,7 +84,7 @@ class _RegisterState extends State<Register>
                     height: 0.05.sh,
                   ),
                   Text(
-                    'Create An Account!',
+                    'Welcome Back!',
                     style: TextStyle(
                       color: accentColor,
                       fontSize: 80.sp,
@@ -92,7 +92,7 @@ class _RegisterState extends State<Register>
                     ),
                   ),
                   Text(
-                    'Sign up to start managing your expenses',
+                    'Login to your account',
                     style: TextStyle(
                       color: accentColor,
                       fontSize: 50.sp,
@@ -124,46 +124,76 @@ class _RegisterState extends State<Register>
                           },
                         ),
                       ),
-                      SizedBox(
-                        height: 40.h,
-                      ),
-                      Obx(
-                        () => CustomField(
-                          isPass: _authController.isConfirmPass.value,
-                          controller: _authController.confirmPassController,
-                          labelText: 'Confirm your password',
-                          suffix: _authController.isConfirmPass.value
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          onTapSuffix: () {
-                            _authController.showConfirmPass();
-                          },
+                      TextButton(
+                        onPressed: () {
+                          Get.offAll(ForgotPass(),
+                              duration: Duration(milliseconds: 800),
+                              transition: Transition.leftToRight);
+                        },
+                        child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            color: const Color.fromARGB(187, 234, 234, 234),
+                            fontSize: 45.sp,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 40.h,
                       ),
                     ],
                   ),
-                  Obx(
-                    () => _authController.isLoading.value
-                        ? SpinKitDoubleBounce(color: Colors.white, size: 50)
-                        : CustomButton(
-                            buttonText: 'Sign Up',
-                            padding: EdgeInsets.symmetric(vertical: 40.h),
-                            bgColor: primaryColor,
-                            borderRadius: 12,
-                            onPressed: () {
-                              _authController.registerUser();
-                            },
+                  CustomButton(
+                    buttonText: 'Login',
+                    padding: EdgeInsets.symmetric(vertical: 40.h),
+                    bgColor: primaryColor,
+                    borderRadius: 12,
+                    onPressed: () {
+                      Custombar.showBar(
+                        'Working',
+                        'bar is working',
+                        [Colors.purple, Colors.blueAccent],
+                        Colors.white,
+                      );
+                    },
+                  ),
+                  SizedBox(height: 5.h),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Divider(
+                                color:
+                                    const Color.fromARGB(90, 234, 234, 234))),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 50.w),
+                          child: Text(
+                            "OR",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 45.sp,
+                            ),
                           ),
+                        ),
+                        Expanded(
+                            child: Divider(
+                                color:
+                                    const Color.fromARGB(90, 234, 234, 234))),
+                      ],
+                    ),
+                  ),
+                  SocialButtons(
+                    btnText: 'Continue with Google',
+                    logo: 'assets/images/google_logo.png',
+                    bgColor: Colors.white,
+                    textColor: Colors.black,
+                    onPressed: () {},
                   ),
                   SizedBox(height: 50.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Already have an account?",
+                        "Don't have an account?",
                         style: TextStyle(
                           color: accentColor,
                         ),
@@ -176,7 +206,7 @@ class _RegisterState extends State<Register>
                         child: InkWell(
                             splashColor: Colors.white24,
                             onTap: () {
-                              Get.offAll(Login(),
+                              Get.offAll(Register(),
                                   duration: Duration(milliseconds: 800),
                                   transition: Transition.leftToRight);
                             },
@@ -184,7 +214,7 @@ class _RegisterState extends State<Register>
                               padding: EdgeInsets.symmetric(
                                   vertical: 5, horizontal: 20),
                               child: Text(
-                                'Login now',
+                                'Sign up now',
                                 style: TextStyle(
                                     color: accentColor,
                                     fontWeight: FontWeight.w700),

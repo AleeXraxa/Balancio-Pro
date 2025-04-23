@@ -2,20 +2,23 @@ import 'package:balancio_pro/constants/colors.dart';
 import 'package:balancio_pro/constants/fonts.dart';
 import 'package:balancio_pro/controllers/auth_controller.dart';
 import 'package:balancio_pro/custom%20widgets/button.dart';
-import 'package:balancio_pro/custom%20widgets/textfield.dart';
-import 'package:balancio_pro/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class ForgotPass extends StatefulWidget {
-  const ForgotPass({super.key});
+class EmailVerification extends StatefulWidget {
+  final String email;
+
+  const EmailVerification({
+    required this.email,
+    super.key,
+  });
 
   @override
-  State<ForgotPass> createState() => _ForgotPassState();
+  State<EmailVerification> createState() => _EmailVerificationState();
 }
 
-class _ForgotPassState extends State<ForgotPass>
+class _EmailVerificationState extends State<EmailVerification>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -79,71 +82,44 @@ class _ForgotPassState extends State<ForgotPass>
                     ],
                   ),
                   SizedBox(
-                    height: 0.05.sh,
+                    height: 0.2.sh,
                   ),
                   Text(
-                    'Forgot Password?',
+                    'Verify Your Email',
                     style: TextStyle(
                       color: accentColor,
                       fontSize: 80.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  SizedBox(height: 0.02.sh),
                   Text(
-                    'Login to your account',
+                    textAlign: TextAlign.center,
+                    'We have sent verification link to: \n${widget.email}',
                     style: TextStyle(
                       color: accentColor,
                       fontSize: 50.sp,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                  SizedBox(height: 0.05.sh),
+                  SizedBox(height: 0.02.sh),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      CustomField(
-                        controller: _authController.emailController,
-                        labelText: 'Enter your email',
-                        prefix: Icons.email_rounded,
-                      ),
-                      SizedBox(
-                        height: 40.h,
-                      ),
-                    ],
+                    children: [],
                   ),
                   CustomButton(
-                    buttonText: 'Reset Password',
+                    buttonText: _authController.resendCoolDown.value == 0
+                        ? 'Resend'
+                        : 'Resend in ${_authController.resendCoolDown.value}',
                     padding: EdgeInsets.symmetric(vertical: 40.h),
                     bgColor: primaryColor,
                     borderRadius: 12,
-                    onPressed: () {},
+                    onPressed: () {
+                      _authController.resendCoolDown.value == 0
+                          ? _authController.resendEmail()
+                          : null;
+                    },
                   ),
-                  SizedBox(height: 50.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                            splashColor: Colors.white24,
-                            onTap: () {
-                              Get.offAll(Login(),
-                                  duration: Duration(milliseconds: 800),
-                                  transition: Transition.leftToRight);
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 20),
-                              child: Text(
-                                'Back to Login',
-                                style: TextStyle(
-                                    color: accentColor,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                            )),
-                      )
-                    ],
-                  )
                 ],
               ),
             ),
