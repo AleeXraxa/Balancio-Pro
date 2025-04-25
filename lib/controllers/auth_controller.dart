@@ -63,6 +63,7 @@ class AuthController extends GetxController {
           [Colors.purple, Colors.blueAccent],
           Colors.white,
         );
+        passwordController.clear();
         return;
       }
 
@@ -82,6 +83,7 @@ class AuthController extends GetxController {
           [Colors.purple, Colors.blueAccent],
           Colors.white,
         );
+        confirmPassController.clear();
         return;
       }
 
@@ -223,6 +225,8 @@ class AuthController extends GetxController {
         [Colors.purple, Colors.blueAccent],
         Colors.white,
       );
+      emailController.clear();
+      passwordController.clear();
     } finally {
       isLoading.value = false;
     }
@@ -377,6 +381,7 @@ class AuthController extends GetxController {
           [Colors.purple, Colors.blueAccent],
           Colors.white,
         );
+
         return;
       }
       await _auth.sendPasswordResetEmail(email: userEmail);

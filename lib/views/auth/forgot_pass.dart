@@ -35,6 +35,11 @@ class _ForgotPassState extends State<ForgotPass>
   final _authController = Get.put(AuthController());
   final TextEditingController _email = TextEditingController();
 
+  void reset() {
+    _authController.passReset(_email.text.trim());
+    _email.clear();
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
@@ -122,7 +127,7 @@ class _ForgotPassState extends State<ForgotPass>
                       borderRadius: 12,
                       onPressed: () {
                         _authController.resendCoolDown.value == 0
-                            ? _authController.passReset(_email.text.trim())
+                            ? reset()
                             : null;
                       },
                     ),
