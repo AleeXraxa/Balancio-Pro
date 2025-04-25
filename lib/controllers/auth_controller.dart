@@ -366,6 +366,41 @@ class AuthController extends GetxController {
     }
   }
 
+  Future<void> passReset(String userEmail) async {
+    try {
+      isLoading.value = true;
+
+      if (userEmail.isEmpty) {
+        Custombar.showBar(
+          'Reset Failed',
+          'Please enter your email',
+          [Colors.purple, Colors.blueAccent],
+          Colors.white,
+        );
+        return;
+      }
+      await _auth.sendPasswordResetEmail(email: userEmail);
+      Custombar.showBar(
+        'Success',
+        'Password reset email sent. Check your inbox.',
+        [Colors.purple, Colors.blueAccent],
+        Colors.white,
+      );
+      startResendCoolDown();
+    } on FirebaseAuthException catch (e) {
+      handleFirebaseAuthError(e);
+    } catch (e) {
+      Custombar.showBar(
+        'Failed',
+        'Something went wrong. Please try again later',
+        [Colors.red, Colors.deepOrange],
+        Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   RxInt resendCoolDown = 0.obs;
 
   void startResendCoolDown() {
@@ -377,13 +412,5 @@ class AuthController extends GetxController {
         resendCoolDown.value--;
       }
     });
-  }
-
-  @override
-  void onClose() {
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPassController.dispose();
-    super.onClose();
   }
 }

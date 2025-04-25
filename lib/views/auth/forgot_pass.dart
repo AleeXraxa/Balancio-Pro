@@ -33,6 +33,7 @@ class _ForgotPassState extends State<ForgotPass>
   }
 
   final _authController = Get.put(AuthController());
+  final TextEditingController _email = TextEditingController();
 
   @override
   void dispose() {
@@ -102,7 +103,7 @@ class _ForgotPassState extends State<ForgotPass>
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       CustomField(
-                        controller: _authController.emailController,
+                        controller: _email,
                         labelText: 'Enter your email',
                         prefix: Icons.email_rounded,
                       ),
@@ -111,12 +112,20 @@ class _ForgotPassState extends State<ForgotPass>
                       ),
                     ],
                   ),
-                  CustomButton(
-                    buttonText: 'Reset Password',
-                    padding: EdgeInsets.symmetric(vertical: 40.h),
-                    bgColor: primaryColor,
-                    borderRadius: 12,
-                    onPressed: () {},
+                  Obx(
+                    () => CustomButton(
+                      buttonText: _authController.resendCoolDown.value == 0
+                          ? 'Resend'
+                          : 'Resend in ${_authController.resendCoolDown.value}',
+                      padding: EdgeInsets.symmetric(vertical: 40.h),
+                      bgColor: primaryColor,
+                      borderRadius: 12,
+                      onPressed: () {
+                        _authController.resendCoolDown.value == 0
+                            ? _authController.passReset(_email.text.trim())
+                            : null;
+                      },
+                    ),
                   ),
                   SizedBox(height: 50.h),
                   Row(
