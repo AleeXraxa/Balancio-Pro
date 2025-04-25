@@ -6,6 +6,7 @@ import 'package:balancio_pro/views/auth/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -113,6 +114,54 @@ class AuthController extends GetxController {
     }
   }
 
+  Future<void> loginWithGoogle() async {
+    try {
+      isLoading.value = true;
+
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        Custombar.showBar(
+          'Login failed',
+          'Login canceled',
+          [Colors.purple, Colors.blueAccent],
+          Colors.white,
+        );
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credentials = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credentials);
+
+      Custombar.showBar(
+        'Login Success',
+        'Welcome ${userCredential.user?.displayName ?? 'User'}',
+        [Colors.purple, Colors.blueAccent],
+        Colors.white,
+      );
+    } on FirebaseAuthException catch (e) {
+      handleFirebaseAuthError(e);
+    } catch (e) {
+      Custombar.showBar(
+        'Login failed',
+        'Something went wrong during Google Sign-In',
+        [Colors.purple, Colors.blueAccent],
+        Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<void> loginUser() async {
     try {
       final email = emailController.text.trim();
@@ -160,7 +209,7 @@ class AuthController extends GetxController {
       } else {
         Custombar.showBar(
           'Login Successfully',
-          'Welcome Dear User.',
+          'Welcome Dear ${userCredential.user?.displayName ?? 'User'}',
           [Colors.purple, Colors.blueAccent],
           Colors.white,
         );
@@ -328,5 +377,13 @@ class AuthController extends GetxController {
         resendCoolDown.value--;
       }
     });
+  }
+
+  @override
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPassController.dispose();
+    super.onClose();
   }
 }

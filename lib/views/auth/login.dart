@@ -185,7 +185,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                     logo: 'assets/images/google_logo.png',
                     bgColor: Colors.white,
                     textColor: Colors.black,
-                    onPressed: () {},
+                    onPressed: () {
+                      _authController.loginWithGoogle();
+                    },
                   ),
                   SizedBox(height: 50.h),
                   Row(
