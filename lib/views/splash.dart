@@ -1,12 +1,11 @@
 import 'package:balancio_pro/constants/colors.dart';
 import 'package:balancio_pro/constants/fonts.dart';
+import 'package:balancio_pro/controllers/auth_controller.dart';
 import 'package:balancio_pro/services/onboarding.dart';
-import 'package:balancio_pro/views/auth/login.dart';
 import 'package:balancio_pro/views/onboarding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/get_core.dart';
-import 'package:get/get_navigation/get_navigation.dart';
+import 'package:get/get.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -23,6 +22,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   late AnimationController _textController;
   late Animation<Offset> _textAnimation;
 
+  final _authController = Get.put(AuthController());
   @override
   void initState() {
     super.initState();
@@ -66,9 +66,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           duration: Duration(milliseconds: 800),
           transition: Transition.leftToRight);
     } else {
-      Get.offAll(Login(),
-          duration: Duration(milliseconds: 800),
-          transition: Transition.leftToRight);
+      _authController.checkLoginStatus();
     }
   }
 

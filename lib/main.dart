@@ -1,6 +1,5 @@
 import 'package:balancio_pro/constants/colors.dart';
 import 'package:balancio_pro/constants/fonts.dart';
-import 'package:balancio_pro/views/auth/profile_setup.dart';
 import 'package:balancio_pro/views/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

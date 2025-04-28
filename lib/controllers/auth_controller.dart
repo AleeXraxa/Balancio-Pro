@@ -5,9 +5,9 @@ import 'package:balancio_pro/model/usermodel.dart';
 import 'package:balancio_pro/views/auth/email_verification.dart';
 import 'package:balancio_pro/views/auth/login.dart';
 import 'package:balancio_pro/views/auth/profile_setup.dart';
+import 'package:balancio_pro/views/dashboard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -108,6 +108,9 @@ class AuthController extends GetxController {
             ),
             duration: Duration(milliseconds: 800),
             transition: Transition.leftToRight);
+        emailController.clear();
+        confirmPassController.clear();
+        passwordController.clear();
       } else {
         Get.offAll(Login(),
             duration: Duration(milliseconds: 800),
@@ -157,6 +160,9 @@ class AuthController extends GetxController {
           [Colors.purple, Colors.blueAccent],
           Colors.white,
         );
+        Get.offAll(Dashboard(),
+            duration: Duration(milliseconds: 800),
+            transition: Transition.leftToRight);
       } else {
         Get.offAll(ProfileSetup(),
             duration: Duration(milliseconds: 800),
@@ -236,6 +242,9 @@ class AuthController extends GetxController {
             [Colors.purple, Colors.blueAccent],
             Colors.white,
           );
+          Get.offAll(Dashboard(),
+              duration: Duration(milliseconds: 800),
+              transition: Transition.leftToRight);
         } else {
           Get.offAll(ProfileSetup(),
               duration: Duration(milliseconds: 800),
@@ -495,5 +504,59 @@ class AuthController extends GetxController {
       }
     }
     return false;
+  }
+
+  final fname = ''.obs;
+  final lname = ''.obs;
+  final gender = ''.obs;
+
+  Future<Map<String, dynamic>?> getUserData(String uid) async {
+    try {
+      DocumentSnapshot doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      if (doc.exists) {
+        return doc.data() as Map<String, dynamic>;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      Custombar.showBar(
+        'Failed',
+        'Something went wrong. Please try again later',
+        [Colors.red, Colors.deepOrange],
+        Colors.white,
+      );
+      return null;
+    }
+  }
+
+  void loadData() async {
+    if (_auth.currentUser == null) return;
+    String uid = _auth.currentUser!.uid;
+    Map<String, dynamic>? userData = await getUserData(uid);
+    if (userData != null) {
+      fname.value = userData['fname'];
+      lname.value = userData['lname'];
+      gender.value = userData['gender'];
+    }
+  }
+
+  void checkLoginStatus() {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      Get.offAll(Dashboard(),
+          duration: Duration(milliseconds: 800),
+          transition: Transition.leftToRight);
+    } else {
+      Get.offAll(Login(),
+          duration: Duration(milliseconds: 800),
+          transition: Transition.leftToRight);
+    }
+  }
+
+  @override
+  void onInit() {
+    loadData();
+    super.onInit();
   }
 }
