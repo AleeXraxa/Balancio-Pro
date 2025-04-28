@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         fontFamily: primaryFont,
         useMaterial3: true,
       ),
-      home: ProfileSetup(),
+      home: Splash(),
     );
   }
 }

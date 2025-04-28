@@ -4,6 +4,7 @@ import 'package:balancio_pro/custom%20widgets/snackbar.dart';
 import 'package:balancio_pro/model/usermodel.dart';
 import 'package:balancio_pro/views/auth/email_verification.dart';
 import 'package:balancio_pro/views/auth/login.dart';
+import 'package:balancio_pro/views/auth/profile_setup.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -147,12 +148,26 @@ class AuthController extends GetxController {
       UserCredential userCredential =
           await _auth.signInWithCredential(credentials);
 
-      Custombar.showBar(
-        'Login Success',
-        'Welcome ${userCredential.user?.displayName ?? 'User'}',
-        [Colors.purple, Colors.blueAccent],
-        Colors.white,
-      );
+      bool isCompleted = await checkProfileCompleted();
+
+      if (isCompleted) {
+        Custombar.showBar(
+          'Login Successfully',
+          'Welcome Dear ${userCredential.user?.displayName ?? 'User'}',
+          [Colors.purple, Colors.blueAccent],
+          Colors.white,
+        );
+      } else {
+        Get.offAll(ProfileSetup(),
+            duration: Duration(milliseconds: 800),
+            transition: Transition.leftToRight);
+        Custombar.showBar(
+          'Complete Profile',
+          'Please complete your profile first',
+          [Colors.purple, Colors.blueAccent],
+          Colors.white,
+        );
+      }
     } on FirebaseAuthException catch (e) {
       handleFirebaseAuthError(e);
     } catch (e) {
@@ -212,12 +227,26 @@ class AuthController extends GetxController {
             duration: Duration(milliseconds: 800),
             transition: Transition.leftToRight);
       } else {
-        Custombar.showBar(
-          'Login Successfully',
-          'Welcome Dear ${userCredential.user?.displayName ?? 'User'}',
-          [Colors.purple, Colors.blueAccent],
-          Colors.white,
-        );
+        bool isCompleted = await checkProfileCompleted();
+
+        if (isCompleted) {
+          Custombar.showBar(
+            'Login Successfully',
+            'Welcome Dear ${userCredential.user?.displayName ?? 'User'}',
+            [Colors.purple, Colors.blueAccent],
+            Colors.white,
+          );
+        } else {
+          Get.offAll(ProfileSetup(),
+              duration: Duration(milliseconds: 800),
+              transition: Transition.leftToRight);
+          Custombar.showBar(
+            'Complete Profile',
+            'Please complete your profile first',
+            [Colors.purple, Colors.blueAccent],
+            Colors.white,
+          );
+        }
       }
     } on FirebaseAuthException catch (e) {
       handleFirebaseAuthError(e);
@@ -449,5 +478,22 @@ class AuthController extends GetxController {
         Colors.white,
       );
     }
+  }
+
+  Future<bool> checkProfileCompleted() async {
+    var user = _auth.currentUser;
+
+    if (user != null) {
+      var userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (userData.exists) {
+        var data = userData.data();
+        return data?['isCompleted'] ?? false;
+      }
+    }
+    return false;
   }
 }
