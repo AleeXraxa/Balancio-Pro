@@ -2,8 +2,11 @@ import 'package:balancio_pro/constants/colors.dart';
 import 'package:balancio_pro/constants/fonts.dart';
 import 'package:balancio_pro/controllers/auth_controller.dart';
 import 'package:balancio_pro/custom%20widgets/button.dart';
+import 'package:balancio_pro/custom%20widgets/snackbar.dart';
 import 'package:balancio_pro/custom%20widgets/textfield.dart';
-import 'package:balancio_pro/views/auth/login.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -34,11 +37,39 @@ class _ProfileSetupState extends State<ProfileSetup>
 
   final _authController = Get.put(AuthController());
   final TextEditingController _fname = TextEditingController();
+  final TextEditingController _lname = TextEditingController();
   RxString selectedGender = 'Male'.obs;
 
-  void reset() {
-    _authController.passReset(_fname.text.trim());
+  void sendData() {
+    var firstName = _fname.text.trim();
+    var lastName = _lname.text.trim();
+    if (firstName.isEmpty && lastName.isEmpty) {
+      Custombar.showBar(
+        'Failed',
+        'Please enter all fields ',
+        [Colors.red, Colors.deepOrange],
+        Colors.white,
+      );
+    }
+    var user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      _authController.saveUserData(
+        uid: user.uid,
+        fname: firstName,
+        lname: lastName,
+        gender: selectedGender.value,
+        isCompleted: true,
+      );
+    }
+    Custombar.showBar(
+      'Profile Completed',
+      'Your data has been saved successfully.',
+      [Colors.red, Colors.deepOrange],
+      Colors.white,
+    );
     _fname.clear();
+    _lname.clear();
+    selectedGender.value = 'Male';
   }
 
   @override
@@ -116,7 +147,7 @@ class _ProfileSetupState extends State<ProfileSetup>
                         height: 0.01.sh,
                       ),
                       CustomField(
-                        controller: _fname,
+                        controller: _lname,
                         labelText: 'Last Name',
                       ),
                       SizedBox(
@@ -124,7 +155,7 @@ class _ProfileSetupState extends State<ProfileSetup>
                       ),
                     ],
                   ),
-                  DropdownButtonFormField(
+                  DropdownButtonFormField2<String>(
                     decoration: InputDecoration(
                       fillColor: primaryColor,
                       filled: true,
@@ -145,11 +176,25 @@ class _ProfileSetupState extends State<ProfileSetup>
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
+                    dropdownStyleData: DropdownStyleData(
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    style: TextStyle(
+                      color: Colors.white, // Selected value ka text color
+                      fontSize: 45.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
                     value: selectedGender.value,
                     items: ['Male', 'Female'].map((gender) {
                       return DropdownMenuItem(
                         value: gender,
-                        child: Text(gender),
+                        child: Text(
+                          gender,
+                          style: TextStyle(color: Colors.white),
+                        ),
                       );
                     }).toList(),
                     onChanged: (String? value) {
@@ -164,7 +209,9 @@ class _ProfileSetupState extends State<ProfileSetup>
                     padding: EdgeInsets.symmetric(vertical: 40.h),
                     bgColor: primaryColor,
                     borderRadius: 12,
-                    onPressed: () {},
+                    onPressed: () {
+                      sendData();
+                    },
                   ),
                   SizedBox(height: 50.h),
                 ],

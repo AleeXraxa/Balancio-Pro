@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:balancio_pro/custom%20widgets/snackbar.dart';
+import 'package:balancio_pro/model/usermodel.dart';
 import 'package:balancio_pro/views/auth/email_verification.dart';
 import 'package:balancio_pro/views/auth/login.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -417,5 +420,34 @@ class AuthController extends GetxController {
         resendCoolDown.value--;
       }
     });
+  }
+
+  Future<void> saveUserData({
+    required String uid,
+    required String fname,
+    required String lname,
+    required String gender,
+    required bool isCompleted,
+  }) async {
+    Usermodel user = Usermodel(
+      uid: uid,
+      fname: fname,
+      lname: lname,
+      gender: gender,
+      isCompleted: isCompleted,
+    );
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .set(user.toMap());
+    } catch (e) {
+      Custombar.showBar(
+        'Failed',
+        'Something went wrong. Please try again later',
+        [Colors.red, Colors.deepOrange],
+        Colors.white,
+      );
+    }
   }
 }
