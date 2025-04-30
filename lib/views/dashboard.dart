@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:balancio_pro/constants/colors.dart';
 import 'package:balancio_pro/controllers/auth_controller.dart';
+import 'package:balancio_pro/custom%20widgets/chart.dart';
 import 'package:balancio_pro/custom%20widgets/container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -160,6 +161,17 @@ class _DashboardState extends State<Dashboard>
                       ),
                     ),
                   ),
+                  SizedBox(height: 0.02.sh),
+                  Text(
+                    'Income vs Expense',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 60.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 0.04.sh),
+                  CustomChart(income: 28000, expense: 12000),
                 ],
               ),
             ),
