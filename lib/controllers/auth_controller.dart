@@ -21,6 +21,12 @@ class AuthController extends GetxController {
   final passwordController = TextEditingController();
   final confirmPassController = TextEditingController();
 
+  void clearControllers() {
+    emailController.clear();
+    passwordController.clear();
+    confirmPassController.clear();
+  }
+
   RxBool isPass = true.obs;
   RxBool isConfirmPass = true.obs;
 
@@ -100,6 +106,7 @@ class AuthController extends GetxController {
         [Colors.purple, Colors.blueAccent],
         Colors.white,
       );
+      clearControllers();
       if (!userCredential.user!.emailVerified) {
         userCredential.user!.sendEmailVerification();
         Get.offAll(
@@ -108,9 +115,6 @@ class AuthController extends GetxController {
             ),
             duration: Duration(milliseconds: 800),
             transition: Transition.leftToRight);
-        emailController.clear();
-        confirmPassController.clear();
-        passwordController.clear();
       } else {
         Get.offAll(Login(),
             duration: Duration(milliseconds: 800),
@@ -137,6 +141,7 @@ class AuthController extends GetxController {
           [Colors.purple, Colors.blueAccent],
           Colors.white,
         );
+        clearControllers();
         return;
       }
 
@@ -173,6 +178,7 @@ class AuthController extends GetxController {
           [Colors.purple, Colors.blueAccent],
           Colors.white,
         );
+        clearControllers();
       }
     } on FirebaseAuthException catch (e) {
       handleFirebaseAuthError(e);
@@ -257,6 +263,7 @@ class AuthController extends GetxController {
           );
         }
       }
+      clearControllers();
     } on FirebaseAuthException catch (e) {
       handleFirebaseAuthError(e);
     } catch (e) {
@@ -551,6 +558,42 @@ class AuthController extends GetxController {
       Get.offAll(Login(),
           duration: Duration(milliseconds: 800),
           transition: Transition.leftToRight);
+    }
+  }
+
+  Future<void> logoutUser() async {
+    try {
+      isLoading.value = true;
+
+      // Sign out from Firebase
+      await FirebaseAuth.instance.signOut();
+
+      // Also sign out from Google if signed in
+      final googleSignIn = GoogleSignIn();
+      if (await googleSignIn.isSignedIn()) {
+        await googleSignIn.signOut();
+      }
+
+      Custombar.showBar(
+        'Logout Successful',
+        'You have been logged out.',
+        [Colors.purple, Colors.blueAccent],
+        Colors.white,
+      );
+
+      // Redirect to login screen
+      Get.offAll(Login(),
+          duration: Duration(milliseconds: 800),
+          transition: Transition.leftToRight);
+    } catch (e) {
+      Custombar.showBar(
+        'Logout Failed',
+        'Something went wrong while logging out.',
+        [Colors.red, Colors.deepOrange],
+        Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
     }
   }
 

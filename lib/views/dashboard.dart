@@ -72,16 +72,20 @@ class _DashboardState extends State<Dashboard>
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Welcome, ${_authController.fname.value}',
-                                style: TextStyle(
-                                  fontSize: 60.sp,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                              Obx(
+                                () => Text(
+                                  'Welcome, ${_authController.fname.value}',
+                                  style: TextStyle(
+                                    fontSize: 60.sp,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                               IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  _authController.logoutUser();
+                                },
                                 icon: Icon(Icons.logout_rounded),
                                 color: Colors.white,
                               ),

@@ -4,6 +4,7 @@ import 'package:balancio_pro/controllers/auth_controller.dart';
 import 'package:balancio_pro/custom%20widgets/button.dart';
 import 'package:balancio_pro/custom%20widgets/snackbar.dart';
 import 'package:balancio_pro/custom%20widgets/textfield.dart';
+import 'package:balancio_pro/views/auth/login.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +60,9 @@ class _ProfileSetupState extends State<ProfileSetup>
         gender: selectedGender.value,
         isCompleted: true,
       );
+      Get.offAll(Login(),
+          duration: Duration(milliseconds: 800),
+          transition: Transition.leftToRight);
     }
     Custombar.showBar(
       'Profile Completed',
